@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>2T3 | Ultimate TicTacToe</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+		<link rel="icon" href="static/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon" />
+		<link rel="stylesheet" type="text/css" href="static/tictac.css" />
+		<script type="text/javascript" src="static/ajax.js"></script>
+		<script type="text/javascript" src="static/tictac.js"></script>
+		<meta name="description" content="Play Ultimate Tic Tac Toe against your Friends (if you have any)." />
+		<meta name="keywords" content="ultimate tic tac toe, online, multiplayer, javascript, velociraptor, idontevenknow" />
+		<meta name="robots" content="index,follow" />
+	</head>
+	<body onload="tictac.setup();">
+		<div id="field">
+		</div>
+		<div id="menu">
+			<div id="meta-info">
+				<div id="status-display">
+					Welcome to 2T3
+				</div>
+				Game Link:<br/>
+				<input type="text" id="game-link" value="--n/a--"/><br/>
+				Your ID:<br/>
+				<em id="player-info">--n/a--</em>
+			</div>
+			
+			<div id="game-info">
+				<!-- Game Info Here {Current|X|O}//-->
+				<span id="current-player-text">Next up</span><br/>
+				<img src="static/x.svg" id="current-player-image" /><br/><br/>
+				Player <img src="static/x.svg" class="text-image" />: <span id="player-x-name">?</span><br/> 
+				Player <img src="static/o.svg" class="text-image" />: <span id="player-o-name">?</span><br/> 
+			</div>
+			
+			<div id="debug-info">
+				<em>Debug Controls</em><br/>
+				<input type="submit" value="sys init" onclick="tictac.setup();" />
+				<input type="submit" value="kill field" onclick="gui.field.clear();" />
+				<input type="submit" value="generate field" onclick="gui.field.init();" />
+				<input type="submit" value="user popup" onclick="gui.loginpopup.show();" />
+				<input type="submit" value="clear highlight" onclick="gui.field.clearHighlight();" />
+				<input type="submit" value="new gid" onclick="comm.getGame();" />
+				<input type="submit" value="log out" onclick="tictac.logout();" />
+				<input type="submit" value="query messages" onclick="comm.getMessages();" />
+				<br/><br/>
+				<textarea rows="20" cols="40" id="debug"></textarea><br/>
+				<em>Get the <a href="http://dev.cbcdn.com/2t3/">latest Source</a> or browse the <a href="https://github.com/cbdevnet/2t3">current Release on Github</a></em>
+			</div>
+		</div>
+		
+		<div id="dim" style="display:none;">
+		</div>
+		
+		<div id="popup-userdata" class="popclose">
+			<h2>Please enter a name and secret for your game identity</h2>
+			<div style="display:inline-block;">
+				Name: <input type="text" id="playername" onkeydown="if(event.keyCode==13) gui.loginpopup.validate();" /><br/>
+				Secret: <input type="password" id="playersecret" onkeydown="if(event.keyCode==13) gui.loginpopup.validate();" /><br/>
+			</div>
+			<div style="display:inline-block; padding-left:2em;">
+				<input type="submit" value="enter" onclick="gui.loginpopup.validate();" />
+			</div>
+			<div>
+				<strong class="warning">Warning: The information entered here WILL be stored in plaintext in your browser cookies and WILL be transmitted unencrypted. 
+				Do not use anything relevant for this. This only serves to rudimentarily identify you in-game.</strong>
+			</div>
+		</div>
+	</body>
+</html>
