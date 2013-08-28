@@ -1,2 +1,4 @@
 26082013 ~2200 Initial playtest deployment
 27082013 1630 Initial rules implemented, source goes live
+27082013 2249 Neatened up parts of the code, added some comments
+28082013 0107 Minor fixes

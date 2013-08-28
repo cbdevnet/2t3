@@ -2,20 +2,26 @@ var gui={
 	dim:function(state){
 		document.getElementById("dim").style.display=(state?"block":"none");
 	},
+
+	statusDisplay:function(text){
+		document.getElementById("status-display").innerHTML=text;
+	},
 	
 	updateTurn:function(player){
-		var elem=document.getElementById("current-player-image");
-		switch(player){
+		document.getElementById("current-player-image").src=gui.getImageForPlayer(player);
+	},
+	
+	getImageForPlayer:function(p){
+		switch(p){
 			case "x":
 			case "X":
-				elem.src="static/x.svg";
-				break;
+				return "static/x.svg";
 			case "o":
 			case "O":
-				elem.src="static/o.svg";
-				break;
+				return "static/o.svg";
 			default:
-				debug.err("Invalid player for setting turn image");
+				debug.err("Image for player "+p+" requested");
+				return false;
 		}
 	},
 	
@@ -23,8 +29,8 @@ var gui={
 		debug.log("Updating static view controls");
 		document.getElementById("player-info").innerHTML=escape(tictac.local.hashname);//FIXME this kills the bang
 		document.getElementById("game-link").value=document.location.href+"#"+escape(tictac.game.id)+"!"+escape(tictac.game.target); //FIXME might be XSS'y
-		
-		
+
+		//FIXME this segment is kinda ugly
 		var x_disp=document.getElementById("player-x-name");
 		var o_disp=document.getElementById("player-o-name");
 		
@@ -42,10 +48,6 @@ var gui={
 			o_disp.innerHTML=(tictac.meta.player_o)?escape(tictac.meta.player_o):"?";
 		}
 		
-	},
-	
-	statusDisplay:function(text){
-		document.getElementById("status-display").innerHTML=text;
 	},
 	
 	field:{
@@ -98,18 +100,7 @@ var gui={
 		updateGfx:function(outer,inner,gfx){//onebased
 			var elem=tictac.local.blocks[outer-1][inner-1];
 			elem.style.backgroundSize="100% 100%";
-			switch(gfx){
-				case "x":
-				case "X":
-					elem.style.backgroundImage="url(static/x.svg)";
-					break;
-				case "o":
-				case "O":
-					elem.style.backgroundImage="url(static/o.svg)";
-					break;
-				default:
-					elem.style.backgroundImage="";
-			}
+			elem.style.backgroundImage="url("+gui.getImageForPlayer(gfx)+")";
 		},
 		highlightOuter:function(index){//onebased
 			var nodes=document.getElementsByClassName("innerfield");
@@ -320,9 +311,11 @@ var tictac={
 					debug.wrn("Got move message from unknown sender");
 					return false;
 				}
-				//run through handleMove
+				
+				//'clone' object to force compliance to the Move object spec
 				var mv=new Move(m.data.move.outer,m.data.move.inner,m.data.move.player);
 				
+				//run through handleMove
 				if(!tictac.handleMove(mv)){
 					debug.err("Illegal remote move!");
 					gui.statusDisplay("Opponent sent illegal move!");
@@ -336,14 +329,17 @@ var tictac={
 				if(!tictac.local.opponent){
 					tictac.meta.player_x=m.data.hashname;
 					tictac.local.opponent=m.sender;
-					gui.statusDisplay("Opponent Joined!");
 					tictac.local.ready=true;
+					
+					gui.statusDisplay("Opponent Joined!");
 					gui.updateStatic();
+					gui.updateTurn(tictac.meta.currentplayer);
+					
+					/*HOOK: REMOTE JOIN (SERVER)*/
 				}
 				comm.sendState(m.sender);
 				break;
 			case "pushstate":
-				debug.log("Got pushstate");
 				//FIXME should be able to accept move array
 				//check validity
 				if(m.data.game.id!=tictac.game.id||m.sender!=tictac.game.target){
@@ -356,9 +352,9 @@ var tictac={
 				}
 				
 				if(tictac.local.wait_pull){
-					gui.statusDisplay("Received host game info!");
 					tictac.meta=m.data.meta;
 					tictac.local.ready=true;
+					gui.statusDisplay("Your turn!");
 					if(tictac.meta.player_x==tictac.local.hashname){
 						debug.log("Game now active, you are playing as X");
 						tictac.local.sign="x";
@@ -374,7 +370,9 @@ var tictac={
 						tictac.local.ready=false;
 					}
 					gui.updateStatic();
+					gui.updateTurn(tictac.meta.currentplayer);
 					tictac.local.wait_pull=false;
+					/*HOOK: LOCAL JOIN (CLIENT)*/
 				}
 				else{
 					debug.wrn("Received pushstate while not waiting for it");
@@ -401,14 +399,19 @@ var tictac={
 		if(tictac.local.moves.length>0){
 			var lastMove=tictac.local.moves[tictac.local.moves.length-1];
 			
+			//check if field already taken
+			//TODO
+			
 			if(move.outer!=lastMove.inner){
-				//TODO check if outer[lastMove.inner] was won
+				//TODO check if outer[lastMove.inner] has winner
 				//if no
 					return false;
 			}
 			
-			//TODO check if move wins ifield
 		}
+		
+		//if inner field not won and move wins inner field, mark as won
+		//TODO
 		
 		//add to array
 		tictac.local.moves.push(move);
@@ -432,6 +435,13 @@ var tictac={
 			default:
 				debug.err("Invalid player "+tictac.meta.currentplayer+" encountered while toggling");
 				return false;
+		}
+		
+		if(tictac.meta.currentplayer==tictac.local.sign){
+			gui.statusDisplay("Your turn!");
+		}
+		else{
+			gui.statusDisplay("Waiting...");
 		}
 		
 		gui.updateTurn(tictac.meta.currentplayer);

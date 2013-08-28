@@ -12,12 +12,21 @@ say, an Android app, which would instantly be able to also play
 against web-based clients :)
 
 A live demo can be found on http://tictac.kitinfo.de/
+The latest source can be found at http://dev.cbcdn.com/2t3/
 
 INSTALLATION
 ------------
-Server-side requirements: PHP5 with SQLite Extension (unless 
+Server-side requirements: PHP5 with SQLite extension (unless 
 you chose to implement another backend, which should be entirely
-possible)
+possible) as well as the JSON extensions (which are built-in for most
+distributions)
+
+Client-side requirements: A decent browser. The most advanced JS features
+this uses are probably Array.push() and Array.forEach, and those 
+should be pretty widely supported by now (Tests were done with Opera 12,
+Chrome <insert big-ass version number here> and Firefox 22).
+
+Remember to update the database path in message.php
 
 ISSUES
 ------
@@ -27,7 +36,7 @@ in fact, a database is the wrong data storage mechanism. I however
 did not want to use WebSockets because they would need server-side
 support (last I checked, lighttpd only supported them by some core
 code patches), and did not want to use Firebase/<insert hip framework here>
-because I just don't.
+because I just don't. I will however look into any suggested alternatives.
 
 All other issues I will happily accept via Email (cb@cbcdn.com)
 

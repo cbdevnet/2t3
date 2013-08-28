@@ -29,7 +29,7 @@
 			<div id="game-info">
 				<!-- Game Info Here {Current|X|O}//-->
 				<span id="current-player-text">Next up</span><br/>
-				<img src="static/x.svg" id="current-player-image" /><br/><br/>
+				<img src="static/blank.svg" id="current-player-image" /><br/><br/>
 				Player <img src="static/x.svg" class="text-image" />: <span id="player-x-name">?</span><br/> 
 				Player <img src="static/o.svg" class="text-image" />: <span id="player-o-name">?</span><br/> 
 			</div>
@@ -56,7 +56,7 @@
 		<div id="popup-userdata" class="popclose">
 			<h2>Please enter a name and secret for your game identity</h2>
 			<div style="display:inline-block;">
-				Name: <input type="text" id="playername" onkeydown="if(event.keyCode==13) gui.loginpopup.validate();" /><br/>
+				Name: <input type="text" id="playername" maxlength="14" onkeydown="if(event.keyCode==13) gui.loginpopup.validate();" /><br/>
 				Secret: <input type="password" id="playersecret" onkeydown="if(event.keyCode==13) gui.loginpopup.validate();" /><br/>
 			</div>
 			<div style="display:inline-block; padding-left:2em;">
