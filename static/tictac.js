@@ -52,6 +52,7 @@ var gui={
 	
 	field:{
 		click:function(event){
+			/*HOOK: LOCAL MOVE*/
 			if(!tictac.local.ready){
 				debug.wrn("Game not ready yet, ignoring");
 				return;
@@ -302,13 +303,18 @@ var tictac={
 	handleMessage:function(m){
 		switch(m.type){
 			case "move":
-				//remote move procedure
+				/*HOOK: REMOTE MOVE*/
 				//if invalid, reply(?)
 				//when moving, send id of base move(?)
 				
 				//check sender, gameid
 				if(m.sender!=tictac.local.opponent||m.data.game.id!=tictac.game.id){
 					debug.wrn("Got move message from unknown sender");
+					return false;
+				}
+				
+				if(m.data.move.player==tictac.local.player.sign){
+					debug.err("Remote player trying to cheat");
 					return false;
 				}
 				
@@ -397,11 +403,15 @@ var tictac={
 		
 		//check move for possibility
 		if(tictac.local.moves.length>0){
-			var lastMove=tictac.local.moves[tictac.local.moves.length-1];
 			
 			//check if field already taken
-			//TODO
-			
+			for(var i=0;i<tictac.local.moves.length;i++){
+				if(move.same(tictac.local.moves[i]){
+					return false;
+				}
+			}
+		
+			var lastMove=tictac.local.moves[tictac.local.moves.length-1];
 			if(move.outer!=lastMove.inner){
 				//TODO check if outer[lastMove.inner] has winner
 				//if no
@@ -411,6 +421,9 @@ var tictac={
 		}
 		
 		//if inner field not won and move wins inner field, mark as won
+		//TODO
+		
+		//check if this move wins the game
 		//TODO
 		
 		//add to array
@@ -562,4 +575,7 @@ function Move(outer,inner,player){
 	this.outer=parseInt(outer);
 	this.inner=parseInt(inner);
 	this.player=player;
+	this.same=function(other){
+		return (other.outer==this.outer)&&(other.inner==this.inner);
+	}
 }
