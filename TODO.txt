@@ -3,3 +3,4 @@
 - Spectators should be able to get statediffs
 - Graphics issues (turn indicator) in Chrome and Opera
 - Hashname displays should auto-linebreak
+- Implement onHashChange

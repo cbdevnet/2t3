@@ -313,7 +313,7 @@ var tictac={
 					return false;
 				}
 				
-				if(m.data.move.player==tictac.local.player.sign){
+				if(m.data.move.player==tictac.local.sign){
 					debug.err("Remote player trying to cheat");
 					return false;
 				}
@@ -406,7 +406,8 @@ var tictac={
 			
 			//check if field already taken
 			for(var i=0;i<tictac.local.moves.length;i++){
-				if(move.same(tictac.local.moves[i]){
+				if(move.same(tictac.local.moves[i])){
+					debug.err("Block already taken");
 					return false;
 				}
 			}
