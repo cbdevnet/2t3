@@ -8,7 +8,9 @@ var gui={
 	},
 	
 	updateTurn:function(player){
-		document.getElementById("current-player-image").src=gui.getImageForPlayer(player);
+		var elem=document.getElementById("current-player-image");
+		elem.style.backgroundSize="100% 100%";
+		elem.style.backgroundImage="url("+gui.getImageForPlayer(player)+")";
 	},
 	
 	getImageForPlayer:function(p){
@@ -20,34 +22,25 @@ var gui={
 			case "O":
 				return "static/o.svg";
 			default:
-				debug.err("Image for player "+p+" requested");
+				debug.err("Image for invalid player "+p+" requested");
 				return false;
 		}
 	},
 	
 	updateStatic:function(){
 		debug.log("Updating static view controls");
-		document.getElementById("player-info").innerHTML=escape(tictac.local.hashname);//FIXME this kills the bang
-		document.getElementById("game-link").value=document.location.href+"#"+escape(tictac.game.id)+"!"+escape(tictac.game.target); //FIXME might be XSS'y
+		document.getElementById("player-info").textContent=tictac.local.hashname;//should hopefully work in all major browsers without XSS
+		document.getElementById("game-link").value=document.location.href+"#"+escape(tictac.game.id)+"!"+escape(tictac.game.target);
 
-		//FIXME this segment is kinda ugly
-		var x_disp=document.getElementById("player-x-name");
-		var o_disp=document.getElementById("player-o-name");
-		
-		if(tictac.meta.player_x==tictac.local.hashname){
-			x_disp.innerHTML="You";
-		}
-		else{
-			x_disp.innerHTML=(tictac.meta.player_x)?escape(tictac.meta.player_x):"?";
-		}
-		
-		if(tictac.meta.player_o==tictac.local.hashname){
-			o_disp.innerHTML="You";
-		}
-		else{
-			o_disp.innerHTML=(tictac.meta.player_o)?escape(tictac.meta.player_o):"?";
-		}
-		
+		["x","o"].forEach(function(sign){
+			var elem=document.getElementById("player-"+sign+"-name");
+			if(tictac.meta["player_"+sign]==tictac.local.hashname){
+				elem.textContent="You!";
+			}
+			else{
+				elem.textContent=(tictac.meta["player_"+sign])?tictac.meta["player_"+sign]:"?";
+			}
+		});		
 	},
 	
 	field:{
@@ -374,6 +367,7 @@ var tictac={
 						debug.log("You joined as a spectator");
 						gui.statusDisplay("Joined as Spectator");
 						tictac.local.ready=false;
+						/*HOOK: SPECTATOR JOIN*/
 					}
 					gui.updateStatic();
 					gui.updateTurn(tictac.meta.currentplayer);
@@ -471,6 +465,7 @@ var comm={
 				tictac.local.hashname=response.player;
 				tictac.meta.player_o=tictac.local.hashname;
 				tictac.local.sign="o";
+				/*HOOK: SERVER PLAYER SIGN*/
 			}
 			else{
 				debug.wrn("No player in GID response");
@@ -518,7 +513,7 @@ var comm={
 	sendState:function(to){
 		debug.log("Sending state to "+to);
 		//FIXME should also send move array		
-		comm.sendMessage("pushstate",JSON.stringify({"to":to,"auth":tictac.player,"game":tictac.game,"meta":tictac.meta}),null);
+		comm.sendMessage("pushstate",JSON.stringify({"to":to,"auth":tictac.player,"game":tictac.game,"meta":tictac.meta,"moves":tictac.local.moves}),null);
 	},
 	pushMove:function(move){
 		comm.sendMessage("move",JSON.stringify({"to":tictac.local.opponent,"auth":tictac.player,"game":tictac.game,"move":move}),null);
@@ -556,18 +551,17 @@ var comm={
 
 var debug={
 	log:function(text){
-		var area=document.getElementById("debug");
-		area.innerHTML+="[LOG] "+text+"\n";
-		area.scrollTop=area.scrollHeight;
+		debug.push("LOG",text);
 	},
 	err:function(text){
-		var area=document.getElementById("debug");
-		area.innerHTML+="[ERR] "+text+"\n";
-		area.scrollTop=area.scrollHeight;
+		debug.push("ERR",text);
 	},
 	wrn:function(text){
+		debug.push("WRN",text);
+	},
+	push:function(tag,text){
 		var area=document.getElementById("debug");
-		area.innerHTML+="[WRN] "+text+"\n";
+		area.textContent+="["+tag+"] "+text+"\n";
 		area.scrollTop=area.scrollHeight;
 	}
 };

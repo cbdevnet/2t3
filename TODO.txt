@@ -1,6 +1,5 @@
 - Favicon is currently empty
-- Move array should be included in pushstate
 - Spectators should be able to get statediffs
-- Graphics issues (turn indicator) in Chrome and Opera
+- message.php should handle mvoes array
 - Hashname displays should auto-linebreak
 - Implement onHashChange

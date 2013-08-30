@@ -3,3 +3,6 @@
 27082013 2249 Neatened up parts of the code, added some comments
 28082013 0107 Minor fixes
 29082013 1924 More comments, minor rule addition
+29082013 1930 Bug fixes
+29082013 1955 Code cleanup, fixing current player indicator
+29082013 2036 Code cleanup, minor fixes
