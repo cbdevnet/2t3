@@ -3,3 +3,4 @@
 - message.php should handle mvoes array
 - Hashname displays should auto-linebreak
 - Implement onHashChange
+- Should have some kind of in-field "Your turn" indicator

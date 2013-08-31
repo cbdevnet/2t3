@@ -6,3 +6,5 @@
 29082013 1930 Bug fixes
 29082013 1955 Code cleanup, fixing current player indicator
 29082013 2036 Code cleanup, minor fixes
+30082013 2359 Implemented field won background
+31082013 1412 Implemented most rule logic

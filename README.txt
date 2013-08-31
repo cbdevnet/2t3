@@ -18,25 +18,30 @@ INSTALLATION
 ------------
 Server-side requirements: PHP5 with SQLite extension (unless 
 you chose to implement another backend, which should be entirely
-possible) as well as the JSON extensions (which are built-in for most
-distributions)
+possible) as well as the JSON extensions (which are built-in for 
+most distributions)
 
-Client-side requirements: A decent browser. The most advanced JS features
-this uses are probably Array.push() and Array.forEach, and those 
-should be pretty widely supported by now (Tests were done with Opera 12,
-Chrome <insert big-ass version number here> and Firefox 22).
+Client-side requirements: A decent browser. The most advanced JS 
+features this uses are probably Array.push() and Array.forEach(), 
+which should be pretty widely supported by now (Tests were done 
+with Opera 12, Chrome <insert big-ass version number here> and 
+Firefox 22).
 
 Remember to update the database path in message.php
 
 ISSUES
 ------
-The one thing I will not accept criticism for is the use of a database
-for message-passing. I know quite well that choice is suboptimal and,
-in fact, a database is the wrong data storage mechanism. I however
-did not want to use WebSockets because they would need server-side
-support (last I checked, lighttpd only supported them by some core
-code patches), and did not want to use Firebase/<insert hip framework here>
-because I just don't. I will however look into any suggested alternatives.
+The one thing I will not accept criticism for is the use of a 
+database for message-passing. I know quite well that choice is 
+suboptimal and, in fact, a database is the wrong data storage 
+mechanism. I however did not want to use WebSockets because they
+would need server-side support (last I checked, lighttpd only 
+supported them by some core code patches), and did not want to use 
+Firebase/<insert hip framework here> because I just don't. 
+I will however look into any suggested alternatives.
+
+You are also very much invited to create your own front- and 
+backends for the underlying API :)
 
 All other issues I will happily accept via Email (cb@cbcdn.com)
 
@@ -44,4 +49,4 @@ CREDITS & SHOUTS
 ----------------
 Thanks to klaxa for help with the SVG stuffs
 Thanks to c_14 for being the first real-life playtester
-Greetings to the awesome people in #kitinfo ;)
+Shouts go out to the awesome people in #kitinfo ;)

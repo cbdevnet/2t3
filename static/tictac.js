@@ -84,6 +84,13 @@ var gui={
 				tictac.local.blocks[outer][inner]=blockList[i];
 			}
 			debug.log("Mapped to "+tictac.local.blocks.length+" outer fields");
+			
+			//index innerfields
+			var fields=document.getElementsByClassName("innerfield");
+			debug.log("Got "+fields.length+" fields to index");
+			for(var i=0;i<fields.length;i++){
+				tictac.local.fields[i]=fields[i];
+			}
 		},
 		init:function(){
 			//clear, create empty
@@ -110,6 +117,15 @@ var gui={
 			for(var i=0;i<nodes.length;i++){
 				nodes[i].style.backgroundColor="inherit";
 			}
+		},
+		fieldBackground:function(field,player){
+			//FIXME highlight winning row with red bars
+			if(!tictac.local.fields[field-1]){
+				debug.err("Invalid field "+field+" supplied for background update");
+				return;
+			}
+			tictac.local.fields[field-1].style.backgroundSize="100% 100%";
+			tictac.local.fields[field-1].style.backgroundImage="url("+gui.getImageForPlayer(player)+")";
 		},
 		inner:{
 			createField:function(outer){//onebased
@@ -193,7 +209,9 @@ var tictac={
 		wait_pull:false,	//currently awaiting game state flag
 		ready:false,		//currently able to push moves
 		blocks:[],			//local map of blocks
-		moves:[]			//moves array
+		fields:[],			//local map of fields
+		moves:[],			//moves array
+		wins:[]				//outer field wins
 	},
 	
 	meta:{
@@ -284,7 +302,7 @@ var tictac={
 			window.setTimeout(tictac.pumpMessages,3000);
 		}
 		else{
-			//linear increase? TODO
+			//linear increase? TODO|DELAYED
 			window.setTimeout(tictac.pumpMessages,6000);
 		}
 	},
@@ -408,27 +426,36 @@ var tictac={
 		
 			var lastMove=tictac.local.moves[tictac.local.moves.length-1];
 			if(move.outer!=lastMove.inner){
-				//TODO check if outer[lastMove.inner] has winner
-				//if no
+				if(!tictac.local.wins[lastMove.inner]){
 					return false;
+				}
 			}
 			
 		}
 		
-		//if inner field not won and move wins inner field, mark as won
-		//TODO
+		//if placed not won and move wins field, mark as won
+		if(!tictac.local.wins[move.outer]&&tictac.winsField(move)){
+			tictac.local.wins[move.outer]=move.player;
+			gui.field.fieldBackground(move.outer,move.player);
+		}
 		
 		//check if this move wins the game
-		//TODO
+		//TODO|DELAYED
 		
 		//add to array
 		tictac.local.moves.push(move);
 		
 		//set gfx
 		gui.field.updateGfx(move.outer,move.inner,move.player);
-		//update field dim
-		gui.field.highlightOuter(move.inner);
-		//TODO clear highlight if outer[inner] was won
+		
+		//clear highlight if outer[inner] was won
+		if(tictac.local.wins[move.inner]){
+			gui.field.clearHighlight();
+		}
+		else{
+			//update field dim
+			gui.field.highlightOuter(move.inner);
+		}
 		
 		//update currentplayer
 		switch(tictac.meta.currentplayer){
@@ -454,6 +481,27 @@ var tictac={
 		
 		gui.updateTurn(tictac.meta.currentplayer);
 		return true;
+	},
+	
+	winsField:function(move){
+		//check if supplied move wins an inner field
+		var board=[];
+		
+		//all blocks owned by this player in the inner field
+		for(var i=0;i<tictac.local.moves.length;i++){
+			if((tictac.local.moves[i].outer==move.outer)&&(tictac.local.moves[i].player==move.player)){
+				board.push(tictac.local.moves[i].inner);
+			}
+		}
+		board.push(move.inner);
+		
+		//cant win if less than three own moves
+		if(board.length<3){
+			return false;
+		}
+		
+		//TODO check winning combinations
+		return false;
 	}
 };
 
