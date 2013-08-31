@@ -254,6 +254,20 @@ var tictac={
 	},
 	
 	setup:function(){
+		if(!Array.prototype.containsAll){
+			Array.prototype.containsAll=function(other){
+				if(!Array.isArray(other)){
+					return false;
+				}
+				for(var i=0;i<other.length;i++){
+					if(this.indexOf(other[i])==-1){
+						return false;
+					}
+				}
+				return true;
+			};
+		}
+	
 		//check cookie
 		if(document.cookie.indexOf("name=")==-1){
 			gui.loginpopup.show();
@@ -500,7 +514,30 @@ var tictac={
 			return false;
 		}
 		
-		//TODO check winning combinations
+		/**
+		
+		THE FOLLOWING IS _ONE_ METHOD TO CEHCK FOR WINS
+		IT WILL PROBABLY BE REPLACED BY SOMETHING A LOT COOLER
+		IN SOME TIME
+		
+		**/
+		
+		var winningCombinations=[[1,2,3],[4,5,6],[7,8,9],[1,4,7],[2,5,8],[3,6,9],[1,5,9],[3,5,7]];
+		
+		for(var i=0;i<winningCombinations.length;i++){
+			if(winningCombinations[i].indexOf(move.inner)>=0){
+				//if contains all, retn true
+				if(board.containsAll(winningCombinations[i])){
+					return true;
+				}
+			}
+		}
+		
+		/**
+		
+		END EMBARASSING HACK
+		
+		**/
 		return false;
 	}
 };

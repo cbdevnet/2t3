@@ -8,3 +8,4 @@
 29082013 2036 Code cleanup, minor fixes
 30082013 2359 Implemented field won background
 31082013 1412 Implemented most rule logic
+31082013 1607 Implemented inner field winning logic (in a suboptimal way)
