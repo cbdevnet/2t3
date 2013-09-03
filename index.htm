@@ -3,8 +3,8 @@
 	<head>
 		<title>2T3 | Ultimate TicTacToe</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
-		<link rel="icon" href="static/favicon.ico" type="image/x-icon" />
-		<link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon" />
+		<link rel="icon" href="static/tictac.png" type="image/x-icon" />
+		<link rel="shortcut icon" href="static/tictac.png" type="image/x-icon" />
 		<link rel="stylesheet" type="text/css" href="static/tictac.css" />
 		<script type="text/javascript" src="static/ajax.js"></script>
 		<script type="text/javascript" src="static/tictac.js"></script>
@@ -44,6 +44,7 @@
 				<input type="submit" value="new gid" onclick="comm.getGame();" />
 				<input type="submit" value="log out" onclick="tictac.logout();" />
 				<input type="submit" value="query messages" onclick="comm.getMessages();" />
+				<input type="submit" value="dump moves" onclick="debug.dumpMoves();" />
 				<br/><br/>
 				<textarea rows="20" cols="40" id="debug"></textarea><br/>
 				<em>Get the <a href="http://dev.cbcdn.com/2t3/">latest Source</a> or browse the <a href="https://github.com/cbdevnet/2t3">current Release on Github</a></em>

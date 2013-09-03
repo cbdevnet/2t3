@@ -153,6 +153,17 @@ var gui={
 				elem.setAttribute("data-inner",inner);
 				elem.onclick=gui.field.click;
 				return elem;
+			},
+			
+			dimBlock:function(outer, inner, state){
+				//dim out block according to state
+				tictac.local.blocks[outer-1][inner-1].style.backgroundColor=state?"#333":"inherit";
+				//FIXME this blocks the background image from showing. find some transparency thingy.
+			},
+			
+			highlightBlock:function(outer, inner, state){
+				//highlight block according to state
+				tictac.local.blocks[outer-1][inner-1].style.borderStyle=state?"dashed":"solid";
 			}
 		},
 		outer:{
@@ -441,10 +452,12 @@ var tictac={
 			var lastMove=tictac.local.moves[tictac.local.moves.length-1];
 			if(move.outer!=lastMove.inner){
 				if(!tictac.local.wins[lastMove.inner]){
+					debug.err("Was not sent to won field, cannot go here");
 					return false;
 				}
 			}
 			
+			gui.field.inner.highlightBlock(lastMove.outer,lastMove.inner,false);
 		}
 		
 		//if placed not won and move wins field, mark as won
@@ -470,6 +483,8 @@ var tictac={
 			//update field dim
 			gui.field.highlightOuter(move.inner);
 		}
+		
+		gui.field.inner.highlightBlock(move.outer,move.inner,true);
 		
 		//update currentplayer
 		switch(tictac.meta.currentplayer){
@@ -528,6 +543,9 @@ var tictac={
 			if(winningCombinations[i].indexOf(move.inner)>=0){
 				//if contains all, retn true
 				if(board.containsAll(winningCombinations[i])){
+					winningCombinations[i].forEach(function(elem){
+						gui.field.inner.dimBlock(move.outer,elem,true);
+					});
 					return true;
 				}
 			}
@@ -597,7 +615,6 @@ var comm={
 	},
 	sendState:function(to){
 		debug.log("Sending state to "+to);
-		//FIXME should also send move array		
 		comm.sendMessage("pushstate",JSON.stringify({"to":to,"auth":tictac.player,"game":tictac.game,"meta":tictac.meta,"moves":tictac.local.moves}),null);
 	},
 	pushMove:function(move){
@@ -648,6 +665,13 @@ var debug={
 		var area=document.getElementById("debug");
 		area.textContent+="["+tag+"] "+text+"\n";
 		area.scrollTop=area.scrollHeight;
+	},
+	dumpMoves:function(){
+		var debugString="";
+		for(var i=0;i<tictac.local.moves.length;i++){
+			debugString+="["+(i+1)+"] "+tictac.local.moves[i].player+": "+tictac.local.moves[i].outer+"."+tictac.local.moves[i].inner+"\n";
+		}
+		window.alert(debugString);
 	}
 };
 

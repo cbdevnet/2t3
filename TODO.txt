@@ -1,4 +1,3 @@
-- Favicon is currently empty
 - Spectators should be able to get statediffs
 - message.php should handle mvoes array
 - Hashname displays should auto-linebreak

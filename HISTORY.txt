@@ -9,3 +9,6 @@
 30082013 2359 Implemented field won background
 31082013 1412 Implemented most rule logic
 31082013 1607 Implemented inner field winning logic (in a suboptimal way)
+31082013 1639 Added move dump option
+03092013 1923 Implemented Highlighting and Dimming of blocks
+03092013 1934 Added preliminary favicon
