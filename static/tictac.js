@@ -466,6 +466,11 @@ var tictac={
 			gui.field.fieldBackground(move.outer,move.player);
 		}
 		
+		//if placed not won, but now full, mark as draw
+		if(!tictac.local.wins[move.outer]&&tictac.movesForOuter(move.outer).length==8){
+			tictac.local.wins[move.outer]="-";
+		}
+		
 		//check if this move wins the game
 		//TODO|DELAYED
 		
@@ -512,26 +517,40 @@ var tictac={
 		return true;
 	},
 	
-	winsField:function(move){
-		//check if supplied move wins an inner field
+	movesForOuter:function(outer){
 		var board=[];
-		
-		//all blocks owned by this player in the inner field
+		if(!outer){
+			return board;
+		}
 		for(var i=0;i<tictac.local.moves.length;i++){
-			if((tictac.local.moves[i].outer==move.outer)&&(tictac.local.moves[i].player==move.player)){
-				board.push(tictac.local.moves[i].inner);
+			if((tictac.local.moves[i].outer==outer)){
+				board.push(tictac.local.moves[i]);
 			}
 		}
-		board.push(move.inner);
+		return board;
+	},
+	
+	winsField:function(move){
+		//check if supplied move wins an outer field
+		var boardMoves=tictac.movesForOuter(move.outer);
+		var playerMoves=[];
+		
+		//all blocks owned by this player in the inner field
+		for(var i=0;i<boardMoves.length;i++){
+			if(boardMoves[i].player==move.player){
+				playerMoves.push(boardMoves[i].inner);
+			}
+		}
+		playerMoves.push(move.inner);
 		
 		//cant win if less than three own moves
-		if(board.length<3){
+		if(playerMoves.length<3){
 			return false;
 		}
 		
 		/**
 		
-		THE FOLLOWING IS _ONE_ METHOD TO CEHCK FOR WINS
+		THE FOLLOWING IS _ONE_ METHOD TO CHECK FOR WINS
 		IT WILL PROBABLY BE REPLACED BY SOMETHING A LOT COOLER
 		IN SOME TIME
 		
@@ -542,7 +561,7 @@ var tictac={
 		for(var i=0;i<winningCombinations.length;i++){
 			if(winningCombinations[i].indexOf(move.inner)>=0){
 				//if contains all, retn true
-				if(board.containsAll(winningCombinations[i])){
+				if(playerMoves.containsAll(winningCombinations[i])){
 					winningCombinations[i].forEach(function(elem){
 						gui.field.inner.dimBlock(move.outer,elem,true);
 					});
