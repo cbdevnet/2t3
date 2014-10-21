@@ -13,4 +13,4 @@
 03092013 1923 Implemented Highlighting and Dimming of blocks
 03092013 1934 Added preliminary favicon
 04092013 1719 Fixed minor debug bug
-02122013 1743 Fixed jduepmeiers issue
+21102014 2222 API Documentation
