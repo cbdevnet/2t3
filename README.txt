@@ -29,6 +29,105 @@ Firefox 22).
 
 Remember to update the database path in message.php
 
+API
+---
+The game can be played via JSON objects POSTed to and read from 
+messages.php. All requests must contain the "auth" object, 
+describing the sending/receiving player.
+
+	"auth" object structure
+		"auth":{
+			"name":"Player Name",
+			"secret":"Player Secret",
+			"session":0		//Numeric Session ID
+		}
+
+The name and secret serve to create unique identifiers for players,
+while the session ID is used to allow playing via multiple windows
+in the same browser.
+
+All responses will at minimum contain the "code" and "status" keys,
+with "code" being an integer describing the result of the last action
+(negative values indicate errors) and "status" being a string
+describing said action.
+
+If basic correctness of the request is ensured, the response will also
+always contain the "player" and "handle" keys, containing the player
+name and message handle, respectively.
+
+For easy serialization, game fields are identified by numbering them
+from 0 to 9, left to right first, from top to bottom. A single field
+is identified by it's outer and inner field ID, the outer one
+identifying the "big" square, the inner one referencing the position
+within that.
+
+To begin or join a game, a "Game Identifier" needs to be requested or 
+provided. Initiating a game is done by accessing the ?gid endpoint. 
+This endpoint will return a "game" object, containing a game ID and a 
+game message target.
+
+	"game" object structure
+		"game":{
+			"id":0,			//Numeric Game ID
+			"target":"Game Message Target"
+		} 
+
+Messages waiting for the current user/game pair can be queried via the 
+?get Endpoint, which is to be given the auth and game objects as input.
+If unread messages are present, the "messages" respone key will contain 
+an array of message objects.
+
+	"messages" entry object structure
+		{
+			"sender":"Sender Message ID",
+			"type":"Message Type",
+			"data":{
+				//Message Payload
+			}
+		}
+
+Subsequent player-to-player communication is done by exchanging messages,
+which are described hereinafter (I love that word!).
+
+getstate message
+	Query state of specified game from game peers.
+	The initiating peer will usually assign the sender of the first
+	incoming getstate message the opposite faction to play.
+
+	Sending endpoint: ?getstate
+	Sending parameters: auth, game
+	Received payload: hashname (Display name of sender)
+
+pushstate message
+	Inform requesting peer of current game metastatus.
+
+	Sending endpoint: ?pushstate
+	Sending parameters: auth, game, to (receiving message target), meta, 
+			[moves] (array of "move" objects, currently unused)
+	Received payload: game, meta
+
+	"meta" object structure
+		"meta":{
+			"currentplayer":"x",	//alternatively, "o"
+			"player_x":"Player X hashname",
+			"player_o":"Player O hashname"
+		}
+
+move message
+	Send a move to the opposing player
+
+	Sending endpoint: ?move
+	Sending parameters: auth, game, to, move
+	Received payload: game, move
+
+	"move" object structure
+		"move":{
+			"outer":0,	//inner field ID (0-9)
+			"inner":0,	//outer field ID (0-9)
+			"player":"x"	//alternatively, "o"
+		}
+
+
 ISSUES
 ------
 The one thing I will not accept criticism for is the use of a 
